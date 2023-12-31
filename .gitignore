@@ -7,4 +7,5 @@ result*
 *.key
 *.md
 
-./profiles/
+./modules/
+./utils/
