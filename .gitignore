@@ -1,0 +1,10 @@
+.directory
+.direnv/
+.gitignore
+result
+build
+result*
+*.key
+*.md
+
+profiles/
