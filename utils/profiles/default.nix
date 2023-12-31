@@ -30,28 +30,18 @@ with lib; with tools; let
   mkSystem = name: {
     system,
     modules ? {},
-    users ? {},
-    targetUser ? "root",
     ...
   }: {
     inherit system;
     specialArgs = { inherit self path inputs tools; };
     modules = [
-      self.nixosModules.utils
+      # Default Modules
       self.nixosModules.impermanence
-      self.nixosModules.home
+      self.nixosModules.disko
+      self.nixosModules.nur
       /${profile_path}/${name}/hardware-configuration.nix
-      ({ ... }: {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          sharedModules = [
-            self.inputs.sops-nix.homeManagerModule
-          ] ++ (importsFiles /${path}/utils/home);
-          extraSpecialArgs = { inherit self path inputs tools; };
-        };
-      })
-    ] ++ (module_parser { inherit modules users targetUser; });
+      /${profile_path}/${name}/disks.nix
+    ] ++ (module_parser { inherit modules; });
   };
 
   _profiles = fold
@@ -63,7 +53,6 @@ with lib; with tools; let
             inherit (z) system;
             nixosSystem = mkSystem x z;
             modules = nixosSystem.modules;
-            deployment = { inherit (z) targetHost targetPort targetUser; };
           })
           (passthruTpl (import /${profile_path}/${x}))
         )

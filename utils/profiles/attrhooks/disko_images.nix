@@ -1,25 +1,9 @@
-{ lib, self, path, inputs, tools, ... }:
+{ lib, ... }:
 {
   name,
-  deployment,
-  modules,
   system,
+  nixosSystem,
   ...
 }: {
-  colmena = {
-    meta = {
-      nixpkgs = import inputs.nixpkgs {
-        inherit system;
-        config = {
-          allowUnfree = true;
-        };
-        overlays = lib.mapAttrsToList (n: v: v) (lib.attrByPath ["overlays"] {} self);
-      };
-      specialArgs = { inherit self path inputs tools; };
-    };
-    ${name} = {
-      deployment = deployment;
-      imports = modules;
-    };
-  };
+  packages.${system}.${name} = (lib.nixosSystem nixosSystem).config.system.build.diskoImages;
 }

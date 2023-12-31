@@ -19,6 +19,7 @@
     in {
       nixosModules = utils.modules // (with inputs; {
         impermanence = impermanence.nixosModules.impermanence;
+        disko = disko.nixosModules.disko;
         nur = nur.nixosModule;
       });
 

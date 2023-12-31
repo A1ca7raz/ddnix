@@ -5,11 +5,7 @@ with lib; with tools; let
 
   blank_tpl = {
     system = "x86_64-linux";
-    targetHost = "127.0.0.1";
-    targetPort = 22;
-    targetUser = "root";
     modules = [];
-    users = {};
     extraConfig = {};
   };
 
@@ -19,7 +15,6 @@ with lib; with tools; let
       ctx_full = recursiveUpdate trivial ctx; # 覆盖模板内容
     in recursiveUpdate ctx_full { # merge模块
       modules = trivial.modules ++ ctx.modules ++ [ trivial.extraConfig ctx.extraConfig ];
-      users = recursiveUpdate trivial.users ctx_full.users;
       "__isWrappedTpl__" = true;
     };
   

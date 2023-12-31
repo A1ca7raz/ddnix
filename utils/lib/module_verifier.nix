@@ -1,24 +1,7 @@
 lib:
 with lib; with builtins; {
-  # Home-manager Module
-  isHomeModule = x:
-    isFunction x &&
-    ! mutuallyExclusive ["home"] (attrNames (functionArgs x));
-
   # NixosModule
-  isNixosModule = x:
-    isFunction x &&
-    mutuallyExclusive ["user" "home"] (attrNames (functionArgs x));
-
-  # NixosModule with arg user
-  isNixosModuleUser = x:
-    isFunction x &&
-    ! mutuallyExclusive ["user"] (attrNames (functionArgs x));
-
-  # Hybrid module with NixosModule and Home-manager module
-  isHybridModule = x:
-    isAttrs x &&
-    (attrNames x) == ["homeModule" "nixosModule"];
+  isNixosModule = isFunction;
 
   # Set of modules
   isModuleSet = x:
