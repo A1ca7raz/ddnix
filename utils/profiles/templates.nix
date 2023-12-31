@@ -10,11 +10,12 @@ with lib; with tools; let
   };
 
   _mkTplWrapper = tpl_content: ctx:
-    with builtins; let
+    let
       trivial = recursiveUpdate blank_tpl tpl_content;  # 生成完整模板
-      ctx_full = recursiveUpdate trivial ctx; # 覆盖模板内容
-    in recursiveUpdate ctx_full { # merge模块
-      modules = trivial.modules ++ ctx.modules ++ [ trivial.extraConfig ctx.extraConfig ];
+      ctx_full = recursiveUpdate trivial ctx;
+    in { # merge模块
+      inherit (ctx_full) system;
+      modules = unique (trivial.modules ++ ctx_full.modules ++ [ trivial.extraConfig ctx_full.extraConfig ]);
       "__isWrappedTpl__" = true;
     };
   
