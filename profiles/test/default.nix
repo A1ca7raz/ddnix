@@ -1,4 +1,7 @@
 { self, vps, ... }:
 vps {
-  modules = [ self.nixosModules.modules.test ];
+  modules = with self.nixosModules.modules; [
+    test
+    virtualization.qemu
+  ];
 }
