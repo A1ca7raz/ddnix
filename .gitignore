@@ -7,4 +7,4 @@ result*
 *.key
 *.md
 
-profiles/
+./profiles/
