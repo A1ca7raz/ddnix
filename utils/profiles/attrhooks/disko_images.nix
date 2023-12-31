@@ -5,5 +5,5 @@
   nixosSystem,
   ...
 }: {
-  packages.${system}.${name} = (lib.nixosSystem nixosSystem).config.system.build.diskoImages;
+  diskoImages.${name} = (lib.nixosSystem nixosSystem).config.system.build.diskoImages;
 }
