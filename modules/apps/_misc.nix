@@ -7,9 +7,6 @@
 
   environment.systemPackages = with pkgs; [
     curlFull
-    iperf
-    lsof
-    neofetch
     openssl
     vim
   ];
