@@ -6,7 +6,7 @@
       mountOptions = [ "defaults" "relatime" "mode=755" ];
     };
     disk.main = {
-      imageSize = "2G";
+      imageSize = "1800M";
       device = "/dev/vda";
       type = "disk";
       content = {
@@ -20,7 +20,7 @@
 
           ESP = {
             label = "BOOT";
-            size = "512M";
+            size = "200M";
             type = "EF00";
             priority = 1;
             content = {
