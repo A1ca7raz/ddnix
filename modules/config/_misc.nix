@@ -1,4 +1,4 @@
-{ modulesPath, ... }:
+{ modulesPath, pkgs, ... }:
 {
-  imports = [(modulesPath + "/profiles/minimal.nix")];
+  # imports = [(modulesPath + "/profiles/minimal.nix")];
 }
