@@ -1,5 +1,4 @@
-{ ... }:
+{ modulesPath, ... }:
 {
-  documentation.nixos.enable = false;
-  programs.command-not-found.enable = false;
+  imports = [(modulesPath + "/profiles/minimal.nix")];
 }
