@@ -6,8 +6,8 @@
       mountOptions = [ "defaults" "relatime" "mode=755" ];
     };
     disk.main = {
-      imageSize = "1500M";
-      device = "/dev/sdb";
+      imageSize = "1800M";
+      device = "/dev/sda";
       type = "disk";
       content = {
         type = "gpt";
