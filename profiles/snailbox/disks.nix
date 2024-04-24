@@ -6,7 +6,7 @@
       mountOptions = [ "defaults" "relatime" "mode=755" ];
     };
     disk.main = {
-      imageSize = "1800M";
+      imageSize = "1500M";
       device = "/dev/sdb";
       type = "disk";
       content = {
