@@ -2,8 +2,10 @@
 {
   users.mutableUsers = false;
   users.users.root = {
-    shell = pkgs.fish;
-    hashedPassword = "$6$99.u/DR1lrbQxXCa$lhyklXdawo0s7Y5wg1C7BlIJ0VqSZI9xesuPmazkqRTUpf8Fnh2rrOode9AIwKnfiT3lrQx3bVGw.rvIpbuPz0";
+    hashedPassword = "$6$EzkF9f7txOPfTWuP$Qqu8qRs2kQBz079PxXELkqjpdH/eIJuV6FMsAzT7sZRFJc/sgdNfGUPDkjmj2fTx5pLZb24seyLFr7.q4hYWd0";
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILeHR3VQCaMfrmY2TErvQOattia/c6eKT3/Bt/iAuVeT"
+    ];
   };
 
   security.sudo.wheelNeedsPassword = false;
