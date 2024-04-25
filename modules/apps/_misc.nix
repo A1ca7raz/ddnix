@@ -9,9 +9,9 @@
     openssl
     vim
     git
-    htop
-    dosfstools
     btrfs-progs
     rsync
+
+    age
   ];
 }
