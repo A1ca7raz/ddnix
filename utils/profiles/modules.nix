@@ -1,9 +1,30 @@
-{ lib, self, path, inputs, tools, ... }:
+{ lib, self, path, inputs, ... }:
 {
-  modules
+  modules,
+  users,
+  targetUser
 }:
-with tools;
+with lib; with builtins;
 let
-  module_list = getModuleList modules;
-in
-  filterNixosModules module_list
+  localUsers =
+    if targetUser == "root"
+    then attrNames users
+    else unique (attrNames users ++ [ targetUser ]);
+
+  moduleAttrs = classifyModules modules localUsers;
+
+  nixosModules = moduleAttrs.nixosModules;
+
+  specificUserModules = foldlAttrs
+    (acc: name: value:
+      let
+        _moduleAttrs = classifyModules (attrByPath [ "modules" ] [] value) [name];
+        _nixosModules_user = _moduleAttrs.nixosModules;
+      in {
+        modules = acc.modules ++ _nixosModules_user;
+      }
+    ) { modules = []; } users;
+in {
+  modules = nixosModules ++ specificUserModules.modules;
+}
+  

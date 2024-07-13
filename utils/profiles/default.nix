@@ -1,5 +1,5 @@
-{ lib, self, path, inputs, tools, ... }@args:
-with lib; with tools; let
+{ lib, self, path, inputs, ... }@args:
+with lib; let
   # module处理器
   module_parser = import ./modules.nix args;
 
@@ -11,7 +11,7 @@ with lib; with tools; let
   inherit (import ./templates.nix args) templates blankTemplate; # 后处理模板集
   passthruTpl = profile:
     let
-      wrapped = profile (templates // args);
+      wrapped = profile ({ inherit templates; } // args);
     in
       if (hasAttrByPath [ "__isWrappedTpl__" ] wrapped)
       then wrapped
@@ -29,20 +29,40 @@ with lib; with tools; let
   # 生成nixossystem
   mkSystem = name: {
     system,
-    modules ? {},
+    modules ? [],
+    users ? {},
+    targetUser ? "root",
+    hostName ? null,
+    tags ? [],
+    args ? {},
     ...
-  }: {
-    inherit system;
-    specialArgs = { inherit self path inputs tools; };
-    modules = [
-      # Default Modules
-      self.nixosModules.impermanence
-      self.nixosModules.disko
-      self.nixosModules.nur
-      /${profile_path}/${name}/hardware-configuration.nix
-      /${profile_path}/${name}/disks.nix
-    ] ++ (module_parser { inherit modules; });
-  };
+  }:
+    let
+      module_parsed = module_parser { inherit modules users targetUser; };
+
+      var = recursiveUpdate (import ./../constant.nix lib) {
+        host = args // {
+          inherit hostName;
+          tags = genAttrs tags (x: x);
+        };
+      };
+
+      specialArgs = { inherit self path inputs var; };
+
+      lib = extend(final: prev: {
+        utils = import ./../lib/var { inherit lib var; };
+      });
+    in {
+      inherit system specialArgs lib;
+      modules = [
+        self.nixosModules.utils
+        self.nixosModules.impermanence
+        self.nixosModules.nur
+        self.nixosModules.sops
+        self.nixosModules.disko
+        /${profile_path}/${name}/hardware-configuration.nix
+      ] ++ module_parsed.modules;
+    };
 
   _profiles = fold
     (x: y:
@@ -53,6 +73,7 @@ with lib; with tools; let
             inherit (z) system;
             nixosSystem = mkSystem x z;
             modules = nixosSystem.modules;
+            deployment = { inherit (z) targetHost targetPort targetUser; };
           })
           (passthruTpl (import /${profile_path}/${x}))
         )

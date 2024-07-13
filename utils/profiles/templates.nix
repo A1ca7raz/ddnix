@@ -1,24 +1,50 @@
-{ lib, path, tools, ... }@args:
-with lib; with tools; let
+{ lib, path, ... }@args:
+with lib; let
   tpl_path = /${path}/profiles/__templates;
   tpl_list = _getListFromDir "nix" tpl_path;
 
   blank_tpl = {
     system = "x86_64-linux";
+    targetHost = "127.0.0.1";
+    targetPort = 22;
+    targetUser = "root";
     modules = [];
-    extraConfig = {};
+    users = {};
+    tags = [];
+    args = {};
+    # extraConfig = {};
   };
 
-  _mkTplWrapper = tpl_content: ctx:
+  _mkTplWrapper = tpl: ctx:
     let
-      trivial = recursiveUpdate blank_tpl tpl_content;  # 生成完整模板
-      ctx_full = recursiveUpdate trivial ctx;
-    in { # merge模块
-      inherit (ctx_full) system;
-      modules = unique (trivial.modules ++ ctx_full.modules ++ [ trivial.extraConfig ctx_full.extraConfig ]);
+      updateKey = key: attrByPath [key] (attrByPath [key] (getAttrFromPath [key] blank_tpl) tpl) ctx;
+
+      localUsers = unique ((optionals (tpl ? users) (attrNames tpl.users)) ++ (optionals (ctx ? users) (attrNames ctx.users)));
+      mergeUsers = user: sum:
+        let
+          tpl_mods = attrByPath [ user "modules" ] [] tpl;
+          ctx_mods = attrByPath [ user "modules" ] [] ctx;
+        in {
+          ${user}.modules = unique (tpl_mods ++ ctx_mods);
+        } // sum;
+
+    in {
+      system = updateKey "system";
+      targetHost = updateKey "targetHost";
+      targetPort = updateKey "targetPort";
+      targetUser = updateKey "targetUser";
+      hostName = attrByPath ["hostName"] null ctx;
+
+      modules = (attrByPath ["modules"] [] ctx) ++ (attrByPath ["modules"] [] tpl)
+        ++ (optional (tpl ? extraConfig) tpl.extraConfig) ++ (optional (ctx ? extraConfig) ctx.extraConfig);
+      users = foldr mergeUsers {} localUsers;
+      tags = unique ((attrByPath ["tags"] [] ctx) ++ (attrByPath ["tags"] [] tpl));
+      args = recursiveUpdate (attrByPath ["args"] {} tpl) (attrByPath ["args"] {} ctx);
+      # modules = trivial.modules ++ ctx_full.modules ++ [ trivial.extraConfig ctx_full.extraConfig ];
+      # users = recursiveUpdate trivial.users ctx_full.users;
       "__isWrappedTpl__" = true;
     };
-  
+
   mkTplWrapper = tpl:
     let
       name = removeNix tpl;
