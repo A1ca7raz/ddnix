@@ -13,9 +13,9 @@ in {
       { path = "/etc/ssh/ssh_host_ed25519_key"; type = "ed25519"; }
       { path = "/etc/ssh/ssh_host_rsa_key"; type = "rsa"; }
     ];
-    extraConfig = ''
-      TrustedUserCAKeys /etc/ssh/ssh_user_ca.pub
-    '';
+    # extraConfig = ''
+    #   TrustedUserCAKeys /etc/ssh/ssh_user_ca.pub
+    # '';
   };
 
   environment.persistence."/nix/persist".files = [
