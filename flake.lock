@@ -279,7 +279,11 @@
           "nur",
           "nixpkgs"
         ],
-        "nur": "nur"
+        "nur": "nur",
+        "sops-nix": [
+          "nur",
+          "sops-nix"
+        ]
       }
     },
     "rust-overlay": {
