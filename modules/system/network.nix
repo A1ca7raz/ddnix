@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   networking.firewall.enable = false;
   networking.useDHCP = false;
@@ -13,4 +13,12 @@
   };
 
   networking.nameservers = [ "8.8.8.8" "8.8.4.4" ];
+
+  system.activationScripts = {
+    symlinkNetworkd.text = ''
+      ln -sfn /nix/persist/etc/systemd/network/eth0.network /etc/systemd/network/eth0.network
+    '';
+
+    symlinkNetworkd.deps = lib.mkAfter [ "etc" ];
+  };
 }
