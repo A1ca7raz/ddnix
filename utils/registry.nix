@@ -1,3 +1,3 @@
 [
-  { name = "modules"; path = "modules"; type = "dir"; }
+  { name = "modules"; path = "modules"; type = "file"; }
 ]

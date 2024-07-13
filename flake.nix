@@ -10,17 +10,18 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix.follows = "nur/sops-nix";
   };
 
-  outputs = inputs@{ self, nixpkgs, ... }:
+  outputs = inputs@{ self, ... }:
     let
-      lib = nixpkgs.lib;
-      utils = import ./utils lib self;
+      utils = import ./utils self;
     in {
       nixosModules = utils.modules // (with inputs; {
         impermanence = impermanence.nixosModules.impermanence;
         disko = disko.nixosModules.disko;
         nur = nur.nixosModule;
+        sops = inputs.sops-nix.nixosModules.sops;
       });
 
       nixosConfigurations = utils.profiles.nixosConfigurations;
