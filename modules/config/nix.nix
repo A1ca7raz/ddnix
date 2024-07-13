@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, config, ... }:
 {
   nix = {
     nrBuildUsers = 0;
@@ -24,5 +24,5 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "24.05";
+  system.stateVersion = config.system.nixos.version;
 }
