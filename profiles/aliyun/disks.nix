@@ -33,7 +33,7 @@
           };
 
           root = {
-            label = "NIXOS";
+            label = "PERSIST";
             size = "100%";
             content = {
               type = "btrfs";
@@ -46,6 +46,10 @@
                 "/PERSIST" = {
                   mountpoint = "/nix/persist";
                   mountOptions = [ "compress=zstd:3" ];
+                };
+                "/SWAP" = {
+                  mountpoint = "/swap";
+                  mountOptions = [];
                 };
               };
             };
