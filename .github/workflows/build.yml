@@ -47,7 +47,7 @@ jobs:
       run: |
         nix build .#`basename $PROFILE`
         mkdir release
-        cp ./result/main.raw ./release/ddnix_image_`basename $PROFILE`_`date +'%Y%m%d'`.img
+        gzip -9kvc ./result/main.raw > ./release/ddnix_image_`basename $PROFILE`_`date +'%Y%m%d'`.img.gz
         echo "release_name=`basename $PROFILE`_`date +'%Y%m%d'`" >> $GITHUB_OUTPUT
 
     - name: 2-1. Release
@@ -55,4 +55,4 @@ jobs:
       with:
         tag_name: ${{ env.PROFILE }}
         name: ${{ steps.build.outputs.release_name }}
-        files: release/ddnix_image_*
+        files: release/ddnix_image_*.img.gz
